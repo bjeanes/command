@@ -151,7 +151,8 @@ RSpec.describe Command do
   end
 
   def command(&block)
-    Class.new(described_class) do
+    Class.new do
+      include Command
       define_method(:call, &block)
     end
   end

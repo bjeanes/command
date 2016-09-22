@@ -1,4 +1,4 @@
-class Command
+module Command
   module Result
 
     # An object which is initialized with a block that defines callbacks to be

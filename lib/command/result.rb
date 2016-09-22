@@ -4,7 +4,7 @@
 # taken. Eventually, the model concept might have a better name and this one
 # can be promoted to the top-level.
 #
-class Command
+module Command
 
   # `Result` is included into `Success` and `Failure`.
   #

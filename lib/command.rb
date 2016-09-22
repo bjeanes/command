@@ -1,8 +1,12 @@
 require 'command/result'
 require 'command/result/switch'
 
-class Command
-  class << self
+module Command
+  def self.included(klass)
+    klass.extend Command::ClassMethods
+  end
+
+  module ClassMethods
     def call(**options, &block)
       handle = block_given? ?
         Result::Switch.new(&block) :
