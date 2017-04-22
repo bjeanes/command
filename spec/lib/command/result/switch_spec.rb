@@ -38,7 +38,7 @@ RSpec.describe Command::Result::Switch do
     end
   end
 
-  context 'wtith successful result' do
+  context 'with successful result' do
     let(:result) { Command::Success.new(42) }
 
     it 'calls the OK block with its value' do

@@ -53,7 +53,7 @@ module Command
       err = catch(:err) { return block.call }
       raise ActiveRecord::Rollback
     end
-    throw :err, err
+    throw(:err, err) if err
   end
 
   def err!(code = :error, value = nil)

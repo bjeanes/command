@@ -63,6 +63,22 @@ RSpec.describe Command do
 
         expect { cmd.call }.not_to change { Plan.count }
       end
+
+      it 'allows rolling back inner transactions' do
+        plan = nil
+        cmd = command do
+          transaction do
+            plan = Plan.create!(name: SecureRandom.hex, price_cents: 0, number_of_reviews: 0)
+            transaction do
+              plan.update_column(:price_cents, 9001)
+              raise ActiveRecord::Rollback
+            end
+          end
+        end
+
+        expect { cmd.call }.to change { Plan.count }
+        expect(plan.reload.price).to eq 0
+      end
     end
 
     context 'called with switch block' do
