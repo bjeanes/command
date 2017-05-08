@@ -57,7 +57,7 @@ module Command
     end
 
     def inspect
-      value = self.value.present? && " #{self.value.inspect}"
+      value = " #{self.value.inspect}" unless self.value.nil?
       "#<Success#{value}>"
     end
   end
