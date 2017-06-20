@@ -1,20 +1,21 @@
 require 'command/result'
 require 'command/result/switch'
+require 'command/piped'
 
 module Command
-  def self.included(klass)
-    klass.extend Command::ClassMethods
-  end
+  class << self
+    def included(klass)
+      klass.extend Command::ClassMethods
+    end
 
-  module ClassMethods
-    def call(**options, &block)
+    def wrap_call(callable:, &block)
       handle = block_given? ?
         Result::Switch.new(&block) :
         ->(result) { result }
 
       code, result = catch(:err) do
         begin
-          [:ok, new(**options).call]
+          [:ok, callable.call]
         rescue => e
           if block_given?
             # Let the switcher provide an avenue for handling this error. If it
@@ -36,11 +37,18 @@ module Command
     end
   end
 
-  def initialize(**options)
+  module ClassMethods
+    def call(**options, &block)
+      Command.wrap_call(callable: new(**options), &block)
+    end
   end
 
   def call
     # Implement me
+  end
+
+  def |(other_command)
+    Piped.new(self, other_command)
   end
 
   private

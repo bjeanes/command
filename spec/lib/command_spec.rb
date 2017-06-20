@@ -169,6 +169,7 @@ RSpec.describe Command do
   def command(&block)
     Class.new do
       include Command
+      def initialize(**params); end
       define_method(:call, &block)
     end
   end
