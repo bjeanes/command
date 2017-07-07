@@ -38,8 +38,8 @@ module Command
   end
 
   module ClassMethods
-    def call(**options, &block)
-      Command.wrap_call(callable: new(**options), &block)
+    def call(*args, **options, &block)
+      Command.wrap_call(callable: new(*args, **options), &block)
     end
   end
 
