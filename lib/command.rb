@@ -13,9 +13,11 @@ module Command
         Result::Switch.new(&block) :
         ->(result) { result }
 
-      code, result = catch(:err) do
+      code, value = catch(:err) do
         begin
-          [:ok, callable.call]
+          result = callable.call
+          return handle.(result) if result.is_a?(Command::Result)
+          [:ok, result]
         rescue => e
           if block_given?
             # Let the switcher provide an avenue for handling this error. If it
@@ -28,11 +30,11 @@ module Command
       end
 
       if code == :ok
-        handle.(Success.new(result))
+        handle.(Success.new(value))
       elsif code == :exception
-        handle.(Failure.new(code: code, cause: result))
+        handle.(Failure.new(code: code, cause: value))
       else
-        handle.(Failure.new(code: code, payload: result))
+        handle.(Failure.new(code: code, payload: value))
       end
     end
   end

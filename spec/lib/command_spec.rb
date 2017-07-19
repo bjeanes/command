@@ -79,6 +79,13 @@ RSpec.describe Command do
         expect { cmd.call }.to change { Plan.count }
         expect(plan.reload.price).to eq 0
       end
+
+      it 'returns actual return value if it is a Command::Result' do
+        result = Command::Success.new(42)
+        cmd = command { result }
+
+        expect(cmd.call).to equal(result)
+      end
     end
 
     context 'called with switch block' do
