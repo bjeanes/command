@@ -66,6 +66,8 @@ module Command
   end
 
   def err!(code = :error, value = nil)
-    raise Failure.new(code: code, payload: value)
+    error = Failure.new(code: code, payload: value)
+    on_error(error) if respond_to?(:on_error, true)
+    raise error
   end
 end
