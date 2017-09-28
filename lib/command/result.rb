@@ -83,6 +83,7 @@ module Command
       message ||= i18n.translate(code, {
         locale: :en,
         scope: [:errors],
+        default: (code || "Unknown error").to_s.humanize,
         **(payload.is_a?(Hash) ? payload : {})
       })
 

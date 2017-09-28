@@ -68,10 +68,10 @@ RSpec.describe Command::Result do
     end
 
     it 'looks up error messages based on code' do
-      code = :foo
+      code = :some_error_message
       i18n = class_double(I18n)
 
-      allow(i18n).to receive(:translate).with(code, {locale: :en, scope: [:errors]}) do
+      allow(i18n).to receive(:translate).with(code, {locale: :en, scope: [:errors], default: "Some error message"}) do
         "My error message"
       end
 
