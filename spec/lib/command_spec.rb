@@ -53,6 +53,25 @@ RSpec.describe Command do
         expect { cmd.call }.to raise_error(ArgumentError, "Missing :foo")
       end
 
+      it 'records any potential exception cause' do
+        exception = StandardError.new("Something went wrong")
+
+        result = command do
+          begin
+            raise exception
+          rescue
+            err! :some_error
+          end
+        end.call
+
+        aggregate_failures do
+          expect(result).to be_a Command::Result
+          expect(result).to be_a Command::Failure
+          expect(result.cause).to eq exception
+        end
+
+      end
+
       it 'rolls back transactions on error' do
         cmd = command do
           transaction do

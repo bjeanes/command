@@ -77,7 +77,7 @@ module Command
 
     attr_reader :code, :payload
 
-    def initialize(code: :error, payload: {}, cause: nil, message: nil, i18n: I18n)
+    def initialize(code: :error, payload: {}, cause: $!, message: nil, i18n: I18n)
       @code, @payload, @cause = code, payload, cause
 
       message ||= i18n.translate(code, {

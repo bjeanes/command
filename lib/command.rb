@@ -13,28 +13,23 @@ module Command
         Result::Switch.new(&block) :
         ->(result) { result }
 
-      code, value = catch(:err) do
-        begin
-          result = callable.call
-          return handle.(result) if result.is_a?(Command::Result)
-          [:ok, result]
-        rescue => e
-          if block_given?
-            # Let the switcher provide an avenue for handling this error. If it
-            # doesn't, it will re-raise anyway.
-            throw :err, [:exception, e]
-          else
-            raise
-          end
-        end
+      result = begin
+        callable.call
+      rescue => e
+        e
       end
 
-      if code == :ok
-        handle.(Success.new(value))
-      elsif code == :exception
-        handle.(Failure.new(code: code, cause: value))
+      case result
+      when Command::Result
+        handle.(result)
+      when Exception
+        if block_given?
+          handle.(Failure.new(code: :exception, cause: result))
+        else
+          raise result
+        end
       else
-        handle.(Failure.new(code: code, payload: value))
+        handle.(Success.new(result))
       end
     end
   end
@@ -60,13 +55,17 @@ module Command
   def transaction(requires_new: true, &block)
     err = nil
     ActiveRecord::Base.transaction(requires_new: requires_new) do
-      err = catch(:err) { return block.call }
-      raise ActiveRecord::Rollback
+      begin
+        return block.call
+      rescue Failure => e
+        err = e
+        raise ActiveRecord::Rollback
+      end
     end
-    throw(:err, err) if err
+    raise err if err
   end
 
   def err!(code = :error, value = nil)
-    throw :err, [code, value]
+    raise Failure.new(code: code, payload: value)
   end
 end
