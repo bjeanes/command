@@ -101,7 +101,7 @@ module Command
         elsif (handler = @handlers[:fallback])
           @caller.instance_exec(result, &handler)
         else
-          raise ArgumentError, "No failure handler or fallback defined"
+          raise ArgumentError, "No failure handler or fallback defined for #{result.code}"
         end
       end
 

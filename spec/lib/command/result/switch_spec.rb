@@ -117,7 +117,7 @@ RSpec.describe Command::Result::Switch do
         switch do
           ok { } # handlers defined, but not errors or fallback
         end
-      end.to raise_error(ArgumentError, 'No failure handler or fallback defined')
+      end.to raise_error(ArgumentError, 'No failure handler or fallback defined for boom!')
     end
   end
 
