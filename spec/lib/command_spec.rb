@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe Command do
   describe 'subclasses' do
-    context 'called directly' do
+    context 'called directly (with `call`)' do
       it 'returns a successful result' do
         result = command { 42 }.call
         aggregate_failures do
@@ -105,6 +105,27 @@ RSpec.describe Command do
 
         expect(cmd.call).to equal(result)
       end
+    end
+
+    context 'called explosively (with `call!`)' do
+      it 'returns value on success' do
+        result = command { 42 }.call!
+        expect(result).to eq 42
+      end
+
+      it 'raises failure result on error' do
+        expect {
+          command { err! :bang }.call!
+        }.to raise_error(Command::Failure) { |error|
+          expect(error.code).to eq :bang
+        }
+      end
+
+      it 'raises the underlying exception on exception' do
+        expect {
+          command { raise "a bug happened" }.call!
+        }.to raise_error(RuntimeError, "a bug happened")
+     end
     end
 
     context 'called with switch block' do

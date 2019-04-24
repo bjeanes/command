@@ -38,6 +38,10 @@ module Command
     def call(*args, **options, &block)
       Command.wrap_call(callable: new(*args, **options), &block)
     end
+
+    def call!(*args, **options)
+      Command.wrap_call(callable: new(*args, **options)).value
+    end
   end
 
   def call
