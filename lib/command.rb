@@ -40,7 +40,7 @@ module Command
     end
 
     def call!(*args, **options)
-      Command.wrap_call(callable: new(*args, **options)).value
+      call(*args, **options).value
     end
   end
 
